@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError, EqualTo
+from wtforms.validators import InputRequired, Length
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
@@ -80,6 +80,7 @@ def home():
             return redirect(url_for('home'))
         user_todos = user.todos
         return render_template("dashboard.html", title="DashBoard", user=user, todos=user_todos)
+
     else:
         return render_template("home.html", title="Home")
 
@@ -103,6 +104,12 @@ def register():
     if User.query.filter_by(username=form.username.data).first():
         flash(
             f"Username {form.username.data} already exists. Please choose a different one!", "danger")
+        return redirect(url_for("register"))
+
+    if form.password.data != form.confirm_password.data:
+        flash(f"Passwords do not Match", "danger")
+        return redirect(url_for("register"))
+
     elif form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
@@ -112,8 +119,7 @@ def register():
         db.session.commit()
         flash(f"Account created for {form.username.data}!", "success")
         return redirect(url_for("login"))
-    elif form.password.data != form.confirm_password.data:
-        flash(f"Passwords do not Match", "danger")
+
     return render_template("register.html", title="Register", form=form)
 
 
