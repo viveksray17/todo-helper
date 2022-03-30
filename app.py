@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
+from wtforms.validators import InputRequired, Length, ValidationError, EqualTo
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
@@ -52,15 +52,9 @@ class RegistrationForm(FlaskForm):
         InputRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Username"})
     password = PasswordField('Password',
                              validators=[InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Password"})
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[InputRequired()], render_kw={"placeholder": "Confirm Password"})
     submit = SubmitField('Sign Up')
-
-    # Check if the username already exists
-    def validate_username(self, username):
-        existing_user_name = User.query.filter_by(
-            username=username.data).first()
-        if existing_user_name:
-            raise ValidationError(
-                "That Username exist. Please Choose a different one")
 
 
 class LoginForm(FlaskForm):
@@ -106,7 +100,10 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form = RegistrationForm()
-    if form.validate_on_submit():
+    if User.query.filter_by(username=form.username.data).first():
+        flash(
+            f"Username {form.username.data} already exists. Please choose a different one!", "danger")
+    elif form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
             form.password.data).decode('utf-8')
         user_created = User(username=form.username.data,
@@ -115,6 +112,8 @@ def register():
         db.session.commit()
         flash(f"Account created for {form.username.data}!", "success")
         return redirect(url_for("login"))
+    elif form.password.data != form.confirm_password.data:
+        flash(f"Passwords do not Match", "danger")
     return render_template("register.html", title="Register", form=form)
 
 
