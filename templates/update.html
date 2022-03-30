@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block heading %}Update Your Todo{% endblock heading %}
+{% block content %}
+  <form action="/update/{{ todo.id }}" method="post">
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input class="form-control" name="todo_title" value="{{ todo.title }}"></br>
+      <label class="form-label">Description</label>
+      <textarea type="text" class="form-control" name="todo_desc">{{ todo.desc }}</textarea></br>
+    </div>
+    <button type="submit" class="btn btn-primary">Update Todo</button>
+  </form>
+  </br>
+{% endblock content %}

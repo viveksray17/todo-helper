@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block heading %}Register Page{% endblock heading %}
+{% block content %}
+  <form action="" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.username }}
+    {{ form.password }}
+    {{ form.submit }}
+  </form>
+  <a class="small" href="{{ url_for('login')}}">Already Have an Account? Log In</a>
+{% endblock content %}

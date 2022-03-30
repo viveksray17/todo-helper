@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block heading %}Add a Todo{% endblock heading %}
+{% block content %}
+  <form action="" method="post">
+    <div class="form-group">
+      <label class="form-label">Title</label>
+      <input class="form-control" placeholder="Enter Todo Title" name="todo_title"></br>
+      <label class="form-label">Description</label>
+      <textarea type="text" class="form-control" name="todo_desc" placeholder="Enter Todo Description"></textarea></br>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Todo</button>
+  </form>
+  </br>
+  {% if todos|length == 0 %}
+    <div class="alert alert-dark">
+      No Todos Yet
+    </div>
+  {% else %}
+    <table class="table table-dark table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Sno</th>
+          <th scope="col">Title</th>
+          <th scope="col">Description</th>
+          <th scope="col">Date Created</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for todo in todos %}
+          <tr>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ todo.title }}</td>
+            <td>{{ todo.desc }}</td>
+            <td>{{ todo.date_posted }} UTC</td>
+            <td>
+              <a class="btn btn-primary btn-sm btn-danger" href="/delete/{{ todo.id }}" role="button">Delete</a>
+              <a class="btn btn-primary btn-sm btn-primary mx-1" href="/update/{{ todo.id }}" role="button">Update</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+{% endblock content %}
