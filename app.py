@@ -113,7 +113,7 @@ def register():
             f"Username {form.username.data} already exists. Please choose a different one!", "danger")
         return redirect(url_for("register"))
 
-    if form.password.data != form.confirm_password.data:
+    elif form.password.data != form.confirm_password.data:
         flash(f"Passwords do not Match", "danger")
         return redirect(url_for("register"))
 
