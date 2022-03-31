@@ -95,6 +95,13 @@ def login():
                 login_user(user)
                 flash(f"{form.username.data} Logged In!", "success")
                 return redirect(url_for("home"))
+            else:
+                flash(
+                    f"Incorrect Password for { form.username.data }", "danger")
+                return redirect(url_for("login"))
+        else:
+            flash(f"User { form.username.data } does not exist!", "danger")
+            return redirect(url_for("login"))
     return render_template("login.html", title="Login", form=form)
 
 
